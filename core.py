@@ -41,11 +41,21 @@ for word in DICTIONARY:
     })
 print("Słownik przygotowany! Słów:", len(DICTIONARY))
 def __score_word(word, options):
+    """
+    Point, if word have the same letter as second word. Bonus point, if they have letter on the same position
+    :param word:
+    :param options:
+    :return:
+    """
     score = 0
-    word = set(tuple(word))
-    for letter in word:
-        for x_word in options:
+    word_tuple = set(tuple(word))
+
+    for x_word in options:
+        for letter in word_tuple:
             score += x_word.count(letter)
+        for index in range(len(x_word)):
+            if x_word[index] == word[index]:
+                score +=1
     return score
 def getBestGuess(options):
     options = list([(__score_word(word, options), word) for word in options])
