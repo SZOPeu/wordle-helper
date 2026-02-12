@@ -40,7 +40,7 @@ for word in DICTIONARY:
         'chars': tuple(word)
     })
 print("Słownik przygotowany! Słów:", len(DICTIONARY))
-def __score_word(word, options):
+def __score_word(word, options, letter_value):
     """
     Point, if word have the same letter as second word. Bonus point, if they have letter on the same position
     :param word:
@@ -48,17 +48,24 @@ def __score_word(word, options):
     :return:
     """
     score = 0
-    word_tuple = set(tuple(word))
-
-    for x_word in options:
-        for letter in word_tuple:
-            score += x_word.count(letter)
-        for index in range(len(x_word)):
-            if x_word[index] == word[index]:
-                score +=1
+    index = 0
+    for letter in word:
+        score += letter_value[letter]['number']
+        score += letter_value[letter]['position'][index]
+        index += 1
     return score
 def getBestGuess(options):
-    options = list([(__score_word(word, options), word) for word in options])
+    letter_value = {}
+    for x_word in options:
+        index = 0
+        for letter in x_word:
+            if letter not in letter_value.keys:
+                letter_value[letter] = {'number': 0, 'position': [0 for _ in range (WORD_LENGTH)]}
+            letter_value[letter]['number'] +=1
+            letter_value[letter]['position'][index] += 1
+            index +=1
+
+    options = list([(__score_word(word, options, letter_value), word) for word in options])
     options.sort(key= lambda x: x[0], reverse=True)
     return options
 def filter_list_classic(options_left, result, guessed_word):
